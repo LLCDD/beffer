@@ -1,9 +1,17 @@
 <template>
   <div class="div">
-    <router-link tag="span" to="quanbu">全部</router-link>
-    <router-link tag="span" to="zhuanqu">赚取</router-link>
-    <router-link tag="span" to="zhichu">支出</router-link>
-    <router-view></router-view>
+    <p>
+      <router-link tag="span" to="quanbu">全部</router-link>
+    </p>
+    <p>
+      <router-link tag="span" to="zhuanqu">赚取</router-link>
+    </p>
+    <p>
+      <router-link tag="span" to="zhichu">支出</router-link>
+    </p>
+    <transition enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutRight">
+      <router-view style=" position: absolute"></router-view>
+    </transition>
   </div>
 </template>
 <script>
@@ -18,6 +26,8 @@ export default {
     this.$store.commit("tishi1", false);
     this.$store.commit("tishi", true);
     this.$store.commit("tabBar", false);
+    this.$store.commit("fanhui", false);
+    this.$store.commit("fanhuiy", true);
   }
 };
 </script>
@@ -27,15 +37,20 @@ export default {
   background: url("../../assets/image/500585755_banner.png") no-repeat bottom;
   background-size: cover;
   min-height: 100%;
+  width: 100%;
   overflow: hidden;
 }
-.div > span {
+.div > p {
+  width: 33.3%;
   display: inline-block;
-  margin-left: 0.7rem;
+  text-align: center;
   padding: 0 0.5rem;
   margin-top: 0.54rem;
   padding-bottom: 0.16rem;
   color: #ffffff;
+}
+
+.div > span {
 }
 .router-link-active {
   color: #27e3d8;

@@ -70,6 +70,7 @@ export default {
                     _this.name = res.data.info.imtoken;
                     _this.src = res.data.info.imtoken_img;
                   }
+                  _this.$router.push("/zhifu/management");
                 }
               });
               _this.$toasted.success("操作成功").goAway(2000);
@@ -149,6 +150,7 @@ export default {
   display: block;
   height: 100%;
   width: 100%;
+  margin-top: 0.4rem;
 }
 .spany {
   display: inline-block;

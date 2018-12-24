@@ -1,6 +1,7 @@
 import Vue from 'vue'
 // mint - ui
 import MintUI from 'mint-ui'
+import Vant from 'vant'
 import 'mint-ui/lib/style.css'
 import { Swipe, SwipeItem, Button, Toast } from 'mint-ui'
 import App from './App.vue'
@@ -11,6 +12,7 @@ import Toasted from 'vue-toasted'
 import { checkUpdate } from '@/update'
 import http from './http'
 import VueQriously from 'vue-qriously'
+import 'vant/lib/index.css';
 // 测试的
 import { InfiniteScroll } from 'mint-ui';
 import { getToken } from '@/util/token'
@@ -31,6 +33,7 @@ import './assets/css/lib/animate.css'
 
 Vue.use(VueAwesomeSwiper)
 Vue.use(MintUI)
+Vue.use(Vant);
 Vue.use(VueQriously)
 Vue.use(VueClipboard)
 // 测试

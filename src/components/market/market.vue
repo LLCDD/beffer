@@ -48,9 +48,12 @@ export default {
     over() {
       this.bool = false;
       this.op = false;
+      this.num = "";
     },
     ok() {
       const _this = this;
+      _this.op = false;
+      _this.bool = false;
       _this.http
         .post("/api/asset/transfer_make", {
           account: _this.money,
@@ -60,7 +63,6 @@ export default {
         .then(res => {
           if (res.code == 200) {
             _this.$toasted.success(res.message).goAway(1200);
-            _this.bool = false;
           } else if (res.code == 400) {
             _this.$toasted.error(res.message, { icon: "error" }).goAway(1200);
           }

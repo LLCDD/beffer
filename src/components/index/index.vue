@@ -83,6 +83,8 @@
         <img class="img2 visi" src="../../assets/icon/m.png" alt>
         <br>
         <span class="visi">im Token</span>
+
+        <div class="ceshi1"></div>
       </div>
     </div>
   </div>
@@ -122,6 +124,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit("fanhuiy", false);
     if (localStorage.getItem("img")) {
       this.imag = JSON.parse(localStorage.getItem("img"));
     }
@@ -261,7 +264,7 @@ export default {
 .div5 > div > span {
   display: inline-block;
   margin-top: 0.16rem;
-  color: #274578;
+  color: #5d90e9;
 }
 .div5 > div {
   width: 33.3%;
@@ -326,4 +329,9 @@ export default {
 .visi {
   visibility: hidden;
 }
+/* .ceshi1 {
+  height: 100px;
+  width: 2rem;
+  background: red;
+} */
 </style>

@@ -17,6 +17,7 @@
   </div>
 </template>
 <script>
+import { PullRefresh } from "vant";
 export default {
   data() {
     return {

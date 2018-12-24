@@ -1,33 +1,44 @@
 <template>
-  <div class="div">
-    <table>
-      <tr>
-        <th>订单状态</th>
-        <th>数量</th>
-        <th>价格</th>
-        <th>时间</th>
-      </tr>
-      <tr v-for="(item,index) in list.list.data" :key="index">
-        <td @click="ok(index,item.id)" ref="ipt">{{ item.status == 3 ? "已完成" : "已取消" }}</td>
-        <td>{{ item.num }}</td>
-        <td>{{ item.price }}</td>
-        <td>{{ item.updated_at }}</td>
-      </tr>
-    </table>
-    <div class="div2" v-if="bool">
-      <button @click="previousPage()">上一页</button>
-      <span>{{firstpage}}/{{lastpage}}</span>
-      <button @click="nextPage()">下一页</button>
-    </div>
-    <div class="div2" v-if="!bool">没有更多数据了</div>
+  <div class="div" style="padding-bottom: 1rem; width:100%;height:100%">
+    <van-pull-refresh class="pull" style="height:100%" v-model="isLoading" @refresh="onRefresh">
+      <table class="table">
+        <tr>
+          <th>订单状态</th>
+          <th>数量</th>
+          <th>价格</th>
+          <th>时间</th>
+        </tr>
+        <tr
+          v-if="ok"
+          v-for="(item,index) in list.list.data"
+          :key="index"
+          @click="ok1(index,item.id)"
+        >
+          <td ref="ipt">
+            <span v-if="ok">{{ item.status == 3 ? "已完成" : "已取消" }}</span>
+          </td>
+          <td>{{ item.num }}</td>
+          <td>{{ item.price }}</td>
+          <td>{{ item.updated_at }}</td>
+        </tr>
+      </table>
+      <div class="div2" v-if="bool">
+        <button @click="previousPage()">上一页</button>
+        <span>{{firstpage}}/{{lastpage}}</span>
+        <button @click="nextPage()">下一页</button>
+      </div>
+      <div class="div2" v-if="!bool">没有更多数据了</div>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
+      isLoading: false,
       msg: "平台支付",
       money: "100.00",
+      ok: false,
       list: {
         list: {
           current_page: 1,
@@ -35,13 +46,13 @@ export default {
             {
               id: 16,
               user_id: 63,
-              price: "0.65",
-              num: 100,
+              price: "",
+              num: "",
               status: 4,
               type: 2,
-              created_at: "2018-12-17 16:46:13",
-              no: "D2018121753515756",
-              updated_at: "2018-12-17 17:47:34",
+              created_at: "",
+              no: "",
+              updated_at: "",
               deal_id: null,
               img: null,
               fee: 10,
@@ -68,8 +79,8 @@ export default {
     };
   },
   mounted() {
-    this.$store.commit("fanhui", true);
-    this.$store.commit("tishi1", false);
+    this.$store.commit("fanhui", false);
+    this.$store.commit("tishi1", true);
     this.$store.commit("tishi", true);
     this.$store.commit("tabBar", true);
     const _this = this;
@@ -86,6 +97,7 @@ export default {
             _this.bool = false;
           }
           _this.list = res.data;
+          _this.ok = true;
         } else if (res.code == 400) {
           _this.$toasted.success(res.message, { icon: "error" }).goAway(1500);
         }
@@ -95,11 +107,12 @@ export default {
       });
   },
   methods: {
-    ok(i, id) {
+    ok1(i, id) {
       // if (this.$refs.ipt[i].innerHTML == "已完成") {
       this.$router.push("/success/" + id);
+      // console.log(i, id);
       // } else {
-      // this.$toasted.error("取消订单没有信息", { icon: "error" }).goAway(1200);
+      //   this.$toasted.error("取消订单没有信息", { icon: "error" }).goAway(1200);
       // }
     },
     previousPage() {
@@ -130,6 +143,27 @@ export default {
         .then(res => {
           _this.list = res.data.list.data;
         });
+    },
+    onRefresh() {
+      const _this = this;
+      setTimeout(() => {
+        _this.http.post("/api/deal/history").then(res => {
+          if (res.code == 200) {
+            console.log(res.data);
+            _this.firstpage = res.data.list.current_page;
+            _this.lastpage = res.data.list.last_page;
+            if (res.data.list.last_page > 1) {
+              _this.bool = true;
+            } else {
+              _this.bool = false;
+            }
+            _this.list = res.data;
+            _this.ok = true;
+            _this.$toast("刷新成功");
+            _this.isLoading = false;
+          }
+        });
+      }, 500);
     }
   }
 };
@@ -148,6 +182,9 @@ table {
   padding-left: 0.18rem;
   padding-right: 0.24rem;
   width: 100%;
+  height: 100%;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
 }
 tr {
   text-align: center;
@@ -174,6 +211,10 @@ td {
   height: 1rem;
   padding-top: 0.3rem;
   text-align: center;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
+  color: #fff;
+  margin-bottom: 1rem;
 }
 .div2 > button:first-child {
   float: left;
@@ -190,5 +231,9 @@ td {
   color: #fff;
   border-radius: 0.1rem;
   width: 1rem;
+}
+.pull {
+  height: 100%;
+  background: url("../../assets/image/500585755_banner.png");
 }
 </style>

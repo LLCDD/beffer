@@ -1,47 +1,43 @@
 <template>
-  <div class="div">
-    <table>
-      <tr>
-        <th>单号</th>
-        <th>数量</th>
-        <th>价格</th>
-        <th>时间</th>
-      </tr>
-      <tr v-for="(item,index) in list" :key="index" @click="top(item.id)">
-        <td>{{ item.no }}</td>
-        <td>{{ item.num }}</td>
-        <td>{{ item.price }}</td>
-        <td>{{ item.created_at }}</td>
-      </tr>
-    </table>
-    <div class="div2" v-if="bool">
-      <button @click="previousPage()">上一页</button>
-      <span>{{firstpage}}/{{lastpage}}</span>
-      <button @click="nextPage()">下一页</button>
-    </div>
-    <div class="div2" v-if="!bool">没有更多数据了</div>
+  <div class="div" style="width:100% ; overflow: hidden;">
+    <van-pull-refresh class="pull" v-model="isLoading" @refresh="onRefresh">
+      <table class="table">
+        <tr>
+          <th>单号</th>
+          <th>数量</th>
+          <th>价格</th>
+          <th>时间</th>
+        </tr>
+        <tr v-for="(item,index) in list" :key="index" @click="top(item.id)" v-if="no">
+          <td>{{ item.no }}</td>
+          <td>{{ item.num }}</td>
+          <td>{{ item.price }}</td>
+          <td>{{ item.created_at }}</td>
+        </tr>
+      </table>
+      <div class="div2" v-if="bool" style="position: relative;">
+        <button @click="previousPage()">上一页</button>
+        <span>{{firstpage}}/{{lastpage}}</span>
+        <button @click="nextPage()">下一页</button>
+      </div>
+      <div class="div2" v-if="!bool" style="position: relative;">没有更多数据了</div>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
+      isLoading: false,
       msg: "平台支付",
       money: "100.00",
       list: [
         {
-          Order: "单号",
-          said: "呢称",
-          num: "数量",
-          money: "价格",
-          timer: "时间"
-        },
-        {
-          Order: "单号",
-          said: "呢称",
-          num: "数量",
-          money: "价格",
-          timer: "时间"
+          Order: "",
+          said: "",
+          num: "",
+          money: "",
+          timer: ""
         }
       ],
       list1: {},
@@ -49,16 +45,16 @@ export default {
       firstpage: "1",
       lastpage: "2",
       bool: false,
-      page: 1
+      page: 1,
+      no: false
     };
   },
   mounted() {
-    this.$store.commit("fanhui", true);
-    this.$store.commit("tishi1", false);
+    this.$store.commit("fanhui", false);
+    // this.$store.commit("tishi1", false);
     this.$store.commit("tishi", true);
     this.$store.commit("tabBar", true);
     const _this = this;
-
     _this.http
       .post("/api/deal/now")
       .then(res => {
@@ -66,6 +62,7 @@ export default {
           console.log(res.data);
           _this.firstpage = res.data.list.current_page;
           _this.lastpage = res.data.list.last_page;
+          _this.no = true;
           if (res.data.list.last_page > 1) {
             _this.bool = true;
           } else {
@@ -121,6 +118,36 @@ export default {
       _this.http.post("/api/deal/now", { page: _this.firstpage }).then(res => {
         _this.list = res.data.list.data;
       });
+    },
+    onRefresh() {
+      const _this = this;
+      setTimeout(() => {
+        _this.http
+          .post("/api/deal/now")
+          .then(res => {
+            if (res.code == 200) {
+              // console.log(res.data);
+              _this.firstpage = res.data.list.current_page;
+              _this.lastpage = res.data.list.last_page;
+              this.$toast("刷新成功");
+              this.isLoading = false;
+              if (res.data.list.last_page > 1) {
+                _this.bool = true;
+              } else {
+                _this.bool = false;
+              }
+              _this.list1 = res.data;
+              _this.list = res.data.list.data;
+            } else if (res.code == 400) {
+              _this.$toasted
+                .success(res.message, { icon: "error" })
+                .goAway(1500);
+            }
+          })
+          .catch(res => {
+            _this.$roasted.success(res.message, { icon: "error" }).goAway(1000);
+          });
+      }, 500);
     }
   }
 };
@@ -131,6 +158,7 @@ export default {
   padding-top: 0.56rem;
   color: #6086c7;
   width: 33.3%;
+  overflow: hidden;
 }
 .span {
   padding-left: 1.2rem;
@@ -139,6 +167,9 @@ table {
   padding-left: 0.18rem;
   padding-right: 0.24rem;
   width: 100%;
+  height: 100%;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
 }
 tr {
   text-align: center;
@@ -151,6 +182,7 @@ th {
   color: #5e85d2;
   border: 0;
   border-bottom: 1px solid #5d8eeb;
+  width: 24.2%;
 }
 td {
   color: #ffffff;
@@ -165,6 +197,9 @@ td {
   height: 1rem;
   padding-top: 0.3rem;
   text-align: center;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
+  margin-bottom: 1rem;
 }
 .div2 > button:first-child {
   float: left;
@@ -181,5 +216,11 @@ td {
   color: #fff;
   border-radius: 0.1rem;
   width: 1rem;
+}
+.pull {
+  height: 100% !important;
+  overflow: hidden;
+  background: url("../../assets/image/500585755_banner.png") no-repeat !important;
+  background-size: cover;
 }
 </style>

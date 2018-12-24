@@ -23,6 +23,9 @@
         <span id="left" @click="tap()" v-if="this.$store.state.fanhui" class="iconfont">
           <i class="iconfont1">&#xe6d8;</i>
         </span>
+        <span id="left" @click="tap1()" v-if="this.$store.state.fanhuiy" class="iconfont">
+          <i class="iconfont1">&#xe6d8;</i>
+        </span>
 
         <div v-if="this.$store.state.tishi">{{ this.$store.state.header }}</div>
         <!-- 用户登录和为登录显示的用户名 -->
@@ -39,6 +42,7 @@
         <!-- <transition
           enter-active-class="animated fadeInLeft"
           leave-active-class="animated fadeInRight"
+          style="position: absolute;"
         >-->
         <router-view></router-view>
         <!-- </transition> -->
@@ -70,7 +74,7 @@
         <div class="size">
           <div>
             <i class="iconfont">&#xe75a;</i>
-            <span class="font">当前版本：2.2.1</span>
+            <span class="font">当前版本：1.0.0</span>
           </div>
         </div>
         <div class="size">
@@ -142,6 +146,9 @@ export default {
     },
     hide() {
       this.$store.commit("sidebar", false);
+    },
+    tap1() {
+      this.$router.push("/index");
     }
   },
   watch: {

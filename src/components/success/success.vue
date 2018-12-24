@@ -167,7 +167,7 @@ export default {
       src: "",
       // 图片的出现
       bool1: false,
-      bd: true
+      bd: false
     };
   },
   computed: {
@@ -207,8 +207,8 @@ export default {
       .then(res => {
         if (res.code == 200) {
           _this.info = res.data;
-          if (res.data.deal.img == null) {
-            _this.bd = false;
+          if (res.data.deal.status == 3) {
+            _this.bd = true;
           }
         } else if (res.code == 400) {
           _this.$toasted.error(res.message, { icon: "error" }).goAway(2000);
@@ -350,7 +350,7 @@ button {
 }
 .div3 {
   width: 1rem;
-  min-height: 1rem;
+  height: 1rem;
   border-radius: 50%;
   overflow: hidden;
   float: right;

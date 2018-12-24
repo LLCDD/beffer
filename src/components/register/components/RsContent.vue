@@ -50,9 +50,9 @@ export default {
     };
   },
   mounted() {
-    if (localStorage.getItem("phone")) {
-      this.recommend = localStorage.getItem("phone");
-    }
+    // if (localStorage.getItem("phone")) {
+    //   this.recommend = localStorage.getItem("phone");
+    // }
   },
   methods: {
     // 一个简单的定时器 点击的时候 计入倒计时 如果倒计时等于1的时候显示点击按钮清除定时器

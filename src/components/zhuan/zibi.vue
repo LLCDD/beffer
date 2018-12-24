@@ -49,6 +49,7 @@ export default {
         .then(res => {
           if (res.code == 200) {
             _this.$toasted.success("操作完成").goAway(1200);
+            _this.$router.push("/shop/assets");
           } else if (res.code == 400) {
             _this.$toasted.error(res.message, { icon: "error" }).goAway(2000);
           }

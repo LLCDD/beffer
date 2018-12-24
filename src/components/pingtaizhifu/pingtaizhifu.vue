@@ -1,23 +1,25 @@
 <template>
   <div class="div">
-    <table>
-      <tr>
-        <th>描述</th>
-        <th>数量</th>
-        <th>时间</th>
-      </tr>
-      <tr v-for="(item,index) in list.list.data" :key="index">
-        <td>{{ item.note }}</td>
-        <td class="td">{{ item.num }}</td>
-        <td>{{ item.created_at }}</td>
-      </tr>
-    </table>
-    <div class="div2" v-if="bool">
-      <button @click="previousPage()">上一页</button>
-      <span>{{firstpage}}/{{lastpage}}</span>
-      <button @click="nextPage()">下一页</button>
-    </div>
-    <div class="div2" v-if="!bool">没有更多数据了</div>
+    <van-pull-refresh style="height:100%" v-model="isLoading" @refresh="onRefresh">
+      <table>
+        <tr>
+          <th>描述</th>
+          <th>数量</th>
+          <th>时间</th>
+        </tr>
+        <tr v-for="(item,index) in list.list.data" :key="index">
+          <td>{{ item.note }}</td>
+          <td class="td">{{ item.num }}</td>
+          <td>{{ item.created_at }}</td>
+        </tr>
+      </table>
+      <div class="div2" v-if="bool">
+        <button @click="previousPage()">上一页</button>
+        <span>{{firstpage}}/{{lastpage}}</span>
+        <button @click="nextPage()">下一页</button>
+      </div>
+      <div class="div2" v-if="!bool">没有更多数据了</div>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
@@ -41,7 +43,8 @@ export default {
       firstpage: "1",
       lastpage: "2",
       bool: false,
-      page: 1
+      page: 1,
+      isLoading: false
     };
   },
   mounted() {
@@ -53,6 +56,7 @@ export default {
     const _this = this;
     _this.http.post("/api/center/plat_log").then(res => {
       if (res.code == 200) {
+        console.log(res);
         _this.list = res.data;
         if (res.data.list.last_page > 1) {
           _this.bool = true;
@@ -92,6 +96,24 @@ export default {
         .then(res => {
           _this.list = res.data.list.data;
         });
+    },
+    onRefresh() {
+      setTimeout(() => {
+        this.$toast("刷新成功");
+        this.isLoading = false;
+        _this.http.post("/api/center/plat_log").then(res => {
+          if (res.code == 200) {
+            console.log(res);
+            _this.list = res.data;
+
+            if (res.data.list.last_page > 1) {
+              _this.bool = true;
+            } else {
+              _this.bool = false;
+            }
+          }
+        });
+      }, 500);
     }
   }
 };

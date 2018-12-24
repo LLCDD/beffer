@@ -28,25 +28,25 @@
         <button v-if="stateb" @click="cancel()">取消</button>
         <!-- <button >等于1 status 判断 待打款还是 却认打款</button> -->
         <button v-if="state1A">等待打款</button>
-        <button v-if="state1">等待收款</button>
+        <button v-if="state1">确认打款</button>
 
         <!-- <button >等于2 stateus 是等待收款 和 确认收款 and 投诉 查看图片</button> -->
-        <button v-if="state2" @click="other()">对方信息</button>
+        <button v-if="state2d" @click="other()">对方信息</button>
         <button v-if="state2C" @click="complaint_make()">投诉</button>
         <button v-if="state2" @click="look()">查看图片</button>
         <button v-if="state2B" @click="confirm()">确认收款</button>
-        <button v-if="state2A">等待收款</button>
+        <button v-if="state2A">等待 收款</button>
         <div class="div4" style="padding-top:0.3rem" v-if="password">
           请输入支付密码
           <br>
-          <input type="password" class="input" v-model="input">
+          <input type="password" class="input" style="color:#000" v-model="input">
           <br>
-          <button @click="quxiao()">取消</button>
-          <button @click="yes()">确定</button>
+          <button @click="quxiao()" style="float:left ;margin-left:0.2rem">取消</button>
+          <button @click="yes()" style="float:right;margin-right:0.3rem">确定</button>
         </div>
 
         <input
-          v-if="state1A"
+          v-if="state1y"
           type="file"
           class="uploadphoto"
           @change="uploadphoto($event)"
@@ -55,7 +55,7 @@
           accept="image/*"
         >
       </div>
-      <img v-if="img" :src="imgSrc" alt @click="top()">
+      <img v-if="img" :src="imgSrc" class="bug" alt @click="top()">
     </div>
     <div class="div2" v-if="boolllc">
       确定取消
@@ -63,6 +63,7 @@
       <button class="button button1" @click="cancel2()">确定</button>
     </div>
     <div class="div0" v-if="bool1">
+      <!-- <div class="div0" v-if="true"> -->
       <textarea name id cols="30" rows="10" placeholder="请输入你要说的内容" v-model="text"></textarea>
       <button class="btn01 btn0" @click="disappear()">取消</button>
       <button class="btn0" @click="submit()">提交</button>
@@ -133,13 +134,13 @@ export default {
         deal: {
           id: 12,
           user_id: 63,
-          price: "0.65",
-          num: 100,
+          price: "",
+          num: "",
           status: 0,
           type: 1,
-          created_at: "2018-12-17 09:39:29",
-          no: "D2018121749495198",
-          updated_at: "2018-12-17 09:39:29",
+          created_at: "",
+          no: "",
+          updated_at: "",
           deal_id: null,
           img: null,
           fee: 10,
@@ -165,6 +166,7 @@ export default {
       state1A: false,
       state2A: false,
       state2B: false,
+      state1y: false,
 
       stateb: true,
       // 判断时候点击取消出现的样式和功能
@@ -172,13 +174,18 @@ export default {
       input: "",
       password: false,
       // text的内容
+
       text: "",
+      // 第一次修改
       bool1: false,
+
+      state2d: false,
       //投诉
       state2C: true,
       // 对方信息
       bool12: false,
       bool3: false,
+      // asdasd
       boolllc: false
     };
   },
@@ -201,9 +208,9 @@ export default {
   },
   methods: {
     look() {
-      if (this.detailas.deal.puser.avatar) {
+      if (this.detailas.deal.img) {
         this.img = true;
-        this.imgSrc = this.detailas.deal.puser.avatar;
+        this.imgSrc = this.detailas.deal.img;
       } else {
         this.$toasted.error("还有没上传图片", { icon: "error" }).goAway(1200);
       }
@@ -304,6 +311,7 @@ export default {
           .then(res => {
             if (res.code == 200) {
               _this.$toasted.success("操作成功").goAway(1500);
+              history.go(0);
             } else if (res.code == 400) {
               _this.$toasted
                 .error(res.data.message, { icon: "error" })
@@ -322,6 +330,7 @@ export default {
     // 取消收款
     quxiao() {
       this.password = false;
+      this.input = "";
     },
     // 再次确认付款发起ajax
     yes() {
@@ -335,6 +344,7 @@ export default {
           if (res.code == 200) {
             _this.$toasted.success(res.message).goAway(1200);
             _this.$router.push("/theraise/trading/dingdan");
+            // history.go(0);
           } else if (res.code == 400) {
             _this.$toasted.error(res.message, { icon: "error" }).goAway(2000);
           }
@@ -350,10 +360,12 @@ export default {
     //关闭投诉
     disappear() {
       this.bool1 = false;
+      this.text = "";
     },
     // 提交
     submit() {
       const _this = this;
+
       _this.http
         .post("/api/deal/complaint_make", {
           id: _this.$route.params.id,
@@ -362,6 +374,8 @@ export default {
         .then(res => {
           if (res.code == 200) {
             _this.bool1 = false;
+            _this.text = "";
+            _this.$router.push("/theraise/trading/dingdan");
             _this.$toasted.success(res.message).goAway(1200);
           } else if (res.code == 400) {
             _this.$toasted.error(res.message, { icon: "error" }).goAway(2000);
@@ -406,30 +420,37 @@ export default {
             } else if (_this.detailas.deal.status == 1) {
               if (_this.detailas.deal.user_id == _this.detailas.login_id) {
                 // 确认打款
-                _this.stateb = false;
-                _this.state1A = true;
+                _this.stateb = false; //取消
+                _this.state1A = false; //等待打款
+                _this.state1 = true; // 确认打款
+                _this.state1y = true;
+                _this.state2d = true; //对方信息
               } else {
                 // 等待打款
 
-                _this.stateb = false;
-                _this.state1A = false;
-                _this.state1 = true;
+                _this.stateb = false; //取消
+                _this.state1A = true; //等待打款
+                _this.state1 = false; //确认打款
+                _this.state2d = true; //对方信息
               }
             } else if (_this.detailas.deal.status == 2) {
               _this.state2 = true;
               if (_this.detailas.deal.user_id == _this.detailas.login_id) {
-                _this.state2A = true;
-                _this.staet2 = true;
-                _this.stateb = false;
+                _this.state2A = true; //等待收款
+                _this.staet2 = true; //打款截图
+                _this.stateb = false; //取消
+                _this.state2d = true; //对方信息
                 // 等待收款
                 // 看上传的图片
               } else {
                 //  确认收款
                 // 看上传的图片
                 // 投诉
-                _this.state2A = false;
-                _this.state2B = true;
-                _this.stateb = false;
+                _this.state2A = false; //等待收款
+                _this.state2B = true; //确认收款
+                _this.staet2 = true; //打款截图
+                _this.stateb = false; //取消
+                _this.state2d = true; //对方信息
               }
             }
           } else {
@@ -440,20 +461,26 @@ export default {
             } else if (_this.detailas.deal.status == 1) {
               if (_this.detailas.deal.user_id == _this.detailas.login_id) {
                 // 等待打款
-                _this.stateb = false;
-                _this.state1A = true;
+                _this.stateb = false; //取消
+                _this.state1A = true; //等待打款
+                _this.state1 = false; //确认打款
+                _this.state2d = true; //对方信息
               } else {
                 // 确认打款
-                _this.stateb = false;
-                _this.state1A = false;
-                _this.state1 = true;
+                _this.stateb = false; //取消
+                _this.state1A = false; //等待打款
+                _this.state1 = true; // 确认打款
+                _this.state1y = true;
+                _this.state2d = true; //对方信息
               }
             } else if (_this.detailas.deal.status == 2) {
               _this.state2 = true;
               if (_this.detailas.deal.user_id == _this.detailas.login_id) {
-                _this.state2B = true;
-                _this.state2 = true;
-                _this.stateb = false;
+                _this.state2A = false; //等待收款
+                _this.state2B = true; //确认收款
+                _this.staet2 = true; //打款截图
+                _this.stateb = false; //取消
+                _this.state2d = true; //对方信息
 
                 //  确认收款
                 //   投诉
@@ -461,10 +488,10 @@ export default {
               } else {
                 // 等待收款
                 // 看上传的图片
-                _this.state2A = true;
-                _this.state2B = false;
-                _this.state2 = true;
-                _this.stateb = false;
+                _this.state2A = true; //等待收款
+                _this.staet2 = true; //打款截图
+                _this.stateb = false; //取消
+                _this.state2d = true; //对方信息
               }
             }
           }
@@ -552,18 +579,21 @@ img {
   left: 0;
   top: 0.32rem;
   opacity: 0;
+  width: 1.4rem;
 }
 .div3 {
   position: relative;
 }
 .div4 {
-  position: absolute;
+  position: fixed;
+
   height: 3rem;
   text-align: center;
   background: #ccc;
-  margin-left: 20%;
   font-size: 0.4rem;
-  top: 1rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 4px;
 }
 .input {
@@ -575,6 +605,7 @@ textarea {
   margin-bottom: 0.1rem;
   margin-left: 5%;
   margin-top: 0.2rem;
+  color: #000;
 }
 .div0 {
   position: fixed;
@@ -704,5 +735,17 @@ textarea {
   display: inline-block;
   width: 3rem;
   line-height: 1rem;
+}
+.bug {
+  display: block;
+  width: 90%;
+  height: 90%;
+  /* margin-left: 5%; */
+  /* margin-bottom: 1rem; */
+  overflow-y: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>

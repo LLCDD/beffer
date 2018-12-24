@@ -77,6 +77,7 @@ export default {
                     _this.phone = res.data.info.alipay_phone;
                     _this.src = res.data.info.alipay_img;
                   }
+                  _this.$router.push("/zhifu/management");
                 }
               });
               _this.$toasted.success(res.message).goAway(1500);
@@ -152,6 +153,7 @@ export default {
   display: block;
   height: 100%;
   width: 100%;
+  margin-top: 0.4rem;
 }
 .spany {
   display: inline-block;

@@ -17,7 +17,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-      msg: "男",
+      msg: "",
       bool: false,
       src: "",
       num: ""
@@ -32,8 +32,10 @@ export default {
         console.log(res);
         if (res.data.gender.gender == "1") {
           _this.bool = false;
+          _this.msg = "男";
         } else if (res.data.gender.gender == "2") {
           _this.bool = true;
+          _this.msg = "女";
         }
       }
     });
@@ -56,6 +58,7 @@ export default {
         .then(res => {
           if (res.code == 200) {
             console.log(res);
+            _this.$router.push("/center/personal");
             _this.$toasted.success("操作成功").goAway(1500);
           } else if (res.code == 400) {
             _this.$toasted.error(res.message, { icon: "error" }).goAway(2000);
@@ -89,8 +92,11 @@ export default {
 }
 span {
   display: inline-block;
+  /* padding-top: 1rem;
+  padding-left: 1.2rem; */
+  width: 50%;
+  text-align: center;
   padding-top: 1rem;
-  padding-left: 1.2rem;
 }
 .color {
   color: aquamarine;

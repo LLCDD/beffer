@@ -42,6 +42,7 @@ export default {
           type: "2"
         })
         .then(res => {
+          _this.$router.push("/");
           _this.$toasted.success("修改成功").goAway(1500);
         })
         .catch(res => {

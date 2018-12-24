@@ -57,6 +57,7 @@ export default {
           .then(res => {
             if (res.code == 200) {
               // console.log(res.data);
+              _this.$router.push("/zhifu/management");
               _this.$toasted.success("操作成功").goAway(1500);
             } else if (res.code == 400) {
               _this.$toasted.error(res.message, { icon: "error" }).goAway(2000);

@@ -1,12 +1,12 @@
 <template>
-  <div class="div1">
+  <div class="div1" style="width:100%">
     <table>
       <tr>
         <th>描述</th>
         <th>数量</th>
         <th>时间</th>
       </tr>
-      <tr v-for="(item,index) in list" :key="index">
+      <tr v-for="(item,index) in list" :key="index" v-if="ti">
         <td>{{ item.note.note }}</td>
         <td class="span1">{{ item.num }}</td>
         <td>{{ item.created_at }}</td>
@@ -31,21 +31,22 @@ export default {
           user_id: 63,
           type: 1,
           status: 1,
-          before: "9900.00",
-          num: "100.00",
+          before: "",
+          num: "",
           log_type: 20,
-          created_at: "2018-12-13 11:56:27",
-          updated_at: "2018-12-13 11:56:27",
+          created_at: "",
+          updated_at: "",
           note: {
             id: 20,
-            note: "强制复投静态母链增加"
+            note: ""
           }
         }
       ],
       firstpage: "1",
       lastpage: "2",
       bool: false,
-      page: 1
+      page: 1,
+      ti: false
     };
   },
   mounted() {
@@ -64,6 +65,7 @@ export default {
             _this.bool = false;
           }
           _this.list = res.data.list.data;
+          _this.ti = true;
         } else if (res.code == 400) {
           _this.$toasted.success(res.message, { icon: "error" }).goAway(1500);
         }
@@ -142,6 +144,9 @@ export default {
 table {
   width: 100%;
   border: 0;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
+  height: 100%;
 }
 tr {
   width: 100%;
@@ -155,6 +160,7 @@ th {
   padding-top: 0.45rem;
   padding-bottom: 0.34rem;
   border-bottom: 1px solid #5c81c4;
+  width: 33.3%;
 }
 td {
   border: 0;
@@ -166,6 +172,8 @@ td {
   height: 1rem;
   padding-top: 0.3rem;
   text-align: center;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
 }
 .div2 > button:first-child {
   float: left;

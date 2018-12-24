@@ -34,6 +34,8 @@ export default new Vuex.Store({
     // 用户的头像
     src: "",
     hname: "23423",
+    // 返回主页的
+    fanhuiy: false
 
 
   },
@@ -128,6 +130,10 @@ export default new Vuex.Store({
       a.hname = b
     },
 
+    // 返回的主页
+    fanhuiy(a, b) {
+      a.fanhuiy = b
+    }
 
 
   },

@@ -1,31 +1,41 @@
 <template>
-  <div class="div">
-    <table>
-      <tr>
-        <th>单号</th>
-        <th>时间</th>
-        <th>处理状态</th>
-      </tr>
-      <tr v-for="(item,index) in list.list.data" :key="index" @click="detail(item.deal.id)">
-        <td>{{ item.deal.no }}</td>
-        <td>{{ item.created_at }}</td>
-        <td>{{ item.status==0?"未处理":"已处理"}}</td>
-      </tr>
-    </table>
-    <div class="div2" v-if="bool">
-      <button @click="previousPage()">上一页</button>
-      <span>{{firstpage}}/{{lastpage}}</span>
-      <button @click="nextPage()">下一页</button>
-    </div>
-    <div class="div2" v-if="!bool">没有更多数据了</div>
+  <div class="div" style="padding-bottom: 1rem; width:100%;height:100%">
+    <van-pull-refresh class="pull" style="height:100%" v-model="isLoading" @refresh="onRefresh">
+      <table>
+        <tr>
+          <th>单号</th>
+          <th>时间</th>
+          <th>处理状态</th>
+        </tr>
+        <tr
+          v-if="ok"
+          v-for="(item,index) in list.list.data"
+          :key="index"
+          @click="detail(item.deal.id)"
+        >
+          <td>{{ item.deal.no }}</td>
+          <td>{{ item.created_at }}</td>
+          <td>
+            <span v-if="ok">{{ item.status==0?"未处理":"已处理"}}</span>
+          </td>
+        </tr>
+      </table>
+      <div class="div2" v-if="bool">
+        <button @click="previousPage()">上一页</button>
+        <span>{{firstpage}}/{{lastpage}}</span>
+        <button @click="nextPage()">下一页</button>
+      </div>
+      <div class="div2" v-if="!bool">没有更多数据了</div>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
+      isLoading: false,
       msg: "平台支付",
-      money: "100.00",
+      money: "",
       list: {
         list: {
           current_page: 1,
@@ -34,13 +44,13 @@ export default {
               id: 4,
               user_id: 63,
               deal_id: 7,
-              text: "werwerwer",
+              text: "",
               status: 0,
-              created_at: "2018-12-19 17:43:33",
-              updated_at: "2018-12-19 17:43:33",
+              created_at: "",
+              updated_at: "",
               deal: {
                 id: 7,
-                no: "D2018121499525349"
+                no: ""
               }
             }
           ],
@@ -60,12 +70,13 @@ export default {
       firstpage: "1",
       lastpage: "2",
       bool: false,
-      page: 1
+      page: 1,
+      ok: false
     };
   },
   mounted() {
-    this.$store.commit("fanhui", true);
-    this.$store.commit("tishi1", false);
+    this.$store.commit("fanhui", false);
+    this.$store.commit("tishi1", true);
     this.$store.commit("tishi", true);
     this.$store.commit("tabBar", true);
     const _this = this;
@@ -89,6 +100,7 @@ export default {
             _this.bool = false;
           }
           _this.list = res.data;
+          _this.ok = true;
         } else if (res.code == 400) {
           _this.$toasted.success(res.message, { icon: "error" }).goAway(1500);
         }
@@ -130,6 +142,27 @@ export default {
         .then(res => {
           _this.list = res.data.list.data;
         });
+    },
+    onRefresh() {
+      const _this = this;
+      setTimeout(() => {
+        _this.http.post("/api/deal/complaint").then(res => {
+          if (res.code == 200) {
+            console.log(res.data);
+            _this.firstpage = res.data.list.current_page;
+            _this.lastpage = res.data.list.last_page;
+            if (res.data.list.last_page > 1) {
+              _this.bool = true;
+            } else {
+              _this.bool = false;
+            }
+            _this.list = res.data;
+            _this.ok = true;
+            this.$toast("刷新成功");
+            this.isLoading = false;
+          }
+        });
+      }, 500);
     }
   }
 };
@@ -148,6 +181,9 @@ table {
   padding-left: 0.18rem;
   padding-right: 0.24rem;
   width: 100%;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
+  height: 100%;
 }
 tr {
   text-align: center;
@@ -160,6 +196,7 @@ th {
   color: #5e85d2;
   border: 0;
   border-bottom: 1px solid #5d8eeb;
+  width: 33.3%;
 }
 td {
   color: #ffffff;
@@ -174,6 +211,10 @@ td {
   height: 1rem;
   padding-top: 0.3rem;
   text-align: center;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
+  color: #fff;
+  margin-bottom: 1rem;
 }
 .div2 > button:first-child {
   float: left;
@@ -190,5 +231,10 @@ td {
   color: #fff;
   border-radius: 0.1rem;
   width: 1rem;
+}
+.pull {
+  height: 100%;
+  background: url("../../assets/image/500585755_banner.png") no-repeat;
+  background-size: cover;
 }
 </style>

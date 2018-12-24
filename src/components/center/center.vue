@@ -18,7 +18,7 @@
         <i class="iconfont" style="float:right">&#xe604;</i>
       </span>
     </p>
-    <p class="p2" @click="tab()">
+    <!-- <p class="p2" @click="tab()">
       <span>Chinese-English shift/中英文切换</span>
       <span>
         <i class="iconfont" :class="{ivon:boll,ivon1:!boll}" style="float:right">&#xe604;</i>
@@ -32,7 +32,7 @@
           <p class="p4" :class="{p6:this.$store.state.language1}"></p>英文/English
         </div>
       </span>
-    </p>
+    </p>-->
     <p class="p2" @click="gender()">
       <span>性别</span>
       <span>

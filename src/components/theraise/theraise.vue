@@ -1,23 +1,35 @@
 <template>
   <div class="theraise">
     <div class="div1">
-      <router-link tag="span" to="mai">买入</router-link>
-      <router-link tag="span" to="chu">卖出</router-link>
-      <router-link tag="span" to="dingdan">当前订单</router-link>
-      <router-link tag="span" to="old">历史订单</router-link>
-      <router-link tag="span" to="zhong">仲裁订单</router-link>
+      <p>
+        <router-link tag="span" to="mai">买入</router-link>
+      </p>
+      <p>
+        <router-link tag="span" to="chu">卖出</router-link>
+      </p>
+      <p>
+        <router-link tag="span" to="dingdan">当前订单</router-link>
+      </p>
+      <p>
+        <router-link tag="span" to="old">历史订单</router-link>
+      </p>
+      <p>
+        <router-link tag="span" to="zhong">仲裁订单</router-link>
+      </p>
     </div>
-    <!-- <transition 17 18 19 enter-active-class="animated fadeIn" leave-active-class="animated fadeOut"> -->
-    <router-view></router-view>
-    <!-- </transition> -->
+    <transition enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutRight">
+      <router-view style=" position:absolute"></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
+import { PullRefresh } from "vant";
 export default {
   data() {
     return {
-      msg: "343"
+      msg: "343",
+      isLoading: false
     };
   },
   mounted() {
@@ -29,7 +41,14 @@ export default {
     this.$store.commit("tabBar", true);
     this.$store.commit("fanhui", false);
   },
-  methods: {}
+  methods: {
+    onRefresh() {
+      setTimeout(() => {
+        this.$toast("刷新成功");
+        this.isLoading = false;
+      }, 500);
+    }
+  }
 };
 </script>
 
@@ -44,15 +63,23 @@ export default {
 .div1 {
   color: #fff;
 }
-.div1 > span {
-  display: inline-block;
+.div1 > p {
   width: 19.9%;
-  text-align: center;
-  /* margin-left: 0.45rem; */
+  display: inline-block;
   font-size: 0.3rem;
   padding-top: 0.36rem;
   padding-bottom: 3px;
+  text-align: center;
 }
+/* .div1 > span {
+  display: inline-block;
+  width: 19.9%;
+  text-align: center;
+  /* margin-left: 0.45rem; 
+  font-size: 0.3rem;
+  padding-top: 0.36rem;
+  padding-bottom: 3px;
+} */
 
 .router-link-active {
   border-bottom: 2px solid #34ede6;

@@ -1,81 +1,83 @@
 <template>
   <div class="div1">
-    <div class="div2">
-      <span>
-        今日大盘价 :
-        <span class="span1">{{ info.price.base }}</span>
-      </span>
-    </div>
-    <div class="div3">
-      <p>
-        {{ info.wallet.static_parent }}
-        <br>
-        <span>锁仓母链</span>
-      </p>
-      <p>
-        {{ info.wallet.static_son }}
-        <br>
-        <span>释放子链</span>
-      </p>
-      <p>
-        {{ info.wallet.dynamic_parent }}
-        <br>
-        <span>动态母链</span>
-      </p>
+    <van-pull-refresh style="height:100%" v-model="isLoading" @refresh="onRefresh">
+      <div class="div2">
+        <span>
+          今日大盘价 :
+          <span class="span1">{{ info.price.base }}</span>
+        </span>
+      </div>
+      <div class="div3">
+        <p>
+          {{ info.wallet.static_parent }}
+          <br>
+          <span>锁仓母链</span>
+        </p>
+        <p>
+          {{ info.wallet.static_son }}
+          <br>
+          <span>释放子链</span>
+        </p>
+        <p>
+          {{ info.wallet.dynamic_parent }}
+          <br>
+          <span>动态母链</span>
+        </p>
 
-      <router-link tag="p" to="/dynamic">
-        {{ info.wallet.dynamic_son }}
-        <br>
-        <span>动态子链</span>
-      </router-link>
-    </div>
-    <div class="div4">
-      <div @click="liebian()">
-        <i class="iconfont icon1" style="color:#f9a52e">&#xe62b;</i>
-        裂变子链：
-        <span>{{ info.wallet.release_son }}</span>
-        <span class="span3">
-          Fission chain
-          <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
-        </span>
+        <router-link tag="p" to="/dynamic">
+          {{ info.wallet.dynamic_son }}
+          <br>
+          <span>动态子链</span>
+        </router-link>
       </div>
-      <div @click="liebian1()">
-        <i class="iconfont icon1" style="color:#f9a52e">&#xe62b;</i>
-        锁仓母链：
-        <span>{{ info.wallet.static_parent }}</span>
-        <span class="span3">
-          Lock parent
-          <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
-        </span>
+      <div class="div4">
+        <div @click="liebian()">
+          <i class="iconfont icon1" style="color:#f9a52e">&#xe62b;</i>
+          裂变子链：
+          <span>{{ info.wallet.release_son }}</span>
+          <span class="span3">
+            Fission chain
+            <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
+          </span>
+        </div>
+        <div @click="liebian1()">
+          <i class="iconfont icon1" style="color:#f9a52e">&#xe62b;</i>
+          锁仓母链：
+          <span>{{ info.wallet.static_parent }}</span>
+          <span class="span3">
+            Lock parent
+            <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
+          </span>
+        </div>
+        <div @click="liebian2()">
+          <i class="iconfont1 icon1" style="color:#f9a52e">&#xe64f;</i>
+          壹区业绩：
+          <span>{{ info.one }}</span>
+          <span class="span3">
+            One area
+            <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
+          </span>
+        </div>
+        <div @click="liebian3()">
+          <i class="iconfont1 icon1" style="color:#f9a52e">&#xe64f;</i>
+          贰区业绩：
+          <span>{{ info.two }}</span>
+          <span class="span3">
+            Two area
+            <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
+          </span>
+        </div>
+        <div>
+          <i class="iconfont1 icon1" style="color:#f9a52e">&#xe64f;</i>
+          预估收益：
+          <span>{{ sun }}</span>
+          <span class="span3">
+            Estimate
+            <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
+          </span>
+        </div>
       </div>
-      <div @click="liebian2()">
-        <i class="iconfont1 icon1" style="color:#f9a52e">&#xe64f;</i>
-        壹区业绩：
-        <span>{{ info.one }}</span>
-        <span class="span3">
-          One area
-          <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
-        </span>
-      </div>
-      <div @click="liebian3()">
-        <i class="iconfont1 icon1" style="color:#f9a52e">&#xe64f;</i>
-        贰区业绩：
-        <span>{{ info.two }}</span>
-        <span class="span3">
-          Two area
-          <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
-        </span>
-      </div>
-      <div>
-        <i class="iconfont1 icon1" style="color:#f9a52e">&#xe64f;</i>
-        预估收益：
-        <span>{{ sun }}</span>
-        <span class="span3">
-          Estimate
-          <i class="iconfont icon2" style="color:#2c59a5">&#xe604;</i>
-        </span>
-      </div>
-    </div>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
@@ -87,6 +89,7 @@ export default {
       // 裂变子链
       msg1: "0.00",
       msg2: "0.00",
+      isLoading: false,
       info: {
         wallet: {
           id: 16,
@@ -155,7 +158,28 @@ export default {
       this.$router.push("/zizhuan/child");
     },
     liebian2() {},
-    liebian3() {}
+    liebian3() {},
+    onRefresh() {
+      const _this = this;
+      setTimeout(() => {
+        _this.http
+          .post("/api/asset")
+          .then(res => {
+            if (res.code == 200) {
+              // console.log(res.data);
+              _this.info = res.data;
+              this.$toast("刷新成功");
+              this.isLoading = false;
+              // console.log(_this.info);
+            } else if (res.code == 400) {
+              _this.$toasted.error(res.message, { icon: "error" }).goAway(2000);
+            }
+          })
+          .catch(res => {
+            _this.$toasted.error(res.message, { icon: "error" }).goAway(1500);
+          });
+      }, 500);
+    }
   }
 };
 </script>

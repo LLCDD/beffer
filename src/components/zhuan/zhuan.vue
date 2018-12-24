@@ -79,6 +79,7 @@ export default {
           })
           .then(res => {
             if (res.code == 200) {
+              _this.$router.push("/shop/assets");
               _this.$toasted.success("操作成功").goAway(1400);
 
               _this.$router.push("/shop/assets");

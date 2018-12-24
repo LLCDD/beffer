@@ -3,7 +3,7 @@
     <p>HGH充币</p>
     <qriously class="img" :value="initQCode" :size="199"/>
     <!-- <p class="p" style="padding-bottom:0.3rem">长按二维码保存到相册</p> -->
-    <textarea name id cols="30" rows="10" class="text" v-model="message"></textarea>
+    <textarea name id cols="30" rows="10" class="text" v-model="message" readonly="readonly"></textarea>
     <button
       type="button"
       v-clipboard:copy="message"
@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       initQCode: "",
-      message: "Copy These Text"
+      message: ""
     };
   },
   methods: {
@@ -99,10 +99,11 @@ export default {
   height: 1rem;
   width: 100%;
   padding-left: 0.8rem;
-  background: url("../../assets/image/500585755_banner.png") no-repeat bottom;
+  background: none;
   background-size: cover;
   color: #fff;
   padding-right: 0.8rem;
   padding-top: 0.16rem;
+  text-align: center;
 }
 </style>
